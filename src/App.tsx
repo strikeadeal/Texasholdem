@@ -1,18 +1,51 @@
 /**
  * App — root shell for "The Back Room".
  *
- * Renders the full Table with mock state for visual QA.
- * The wiring agent will swap mockState for the live store.
+ * Routes between:
+ *   1. FirstRun (not yet started)
+ *   2. RebuyDialog overlay (human busted at handover)
+ *   3. Live Table (game in progress)
  *
  * Layout: --backdrop → brass rail outer → mahogany band → felt + Table.
  * Safe-area insets are respected via env(safe-area-inset-*).
  */
 import React from 'react';
 import { Table } from './components/Table';
-import { mockState, mockLegalActions } from './components/__mock__/mockState';
+import { FirstRun } from './components/FirstRun';
+import { RebuyDialog } from './components/RebuyDialog';
+import { useTableStore } from './store/table';
+import { useReducedMotion } from './hooks/useReducedMotion';
 import styles from './App.module.css';
 
 export default function App() {
+  const {
+    state,
+    started,
+    legalActions,
+    awaitingHumanRebuy,
+    start,
+    submitHumanAction,
+    rebuyHuman,
+    nextHand,
+  } = useTableStore();
+
+  const reducedMotion = useReducedMotion();
+
+  // ---- Not started yet ----
+  if (!started || !state) {
+    return (
+      <div className={styles.viewport}>
+        <div className={styles.railOuter}>
+          <div className={styles.railInner}>
+            <FirstRun onStart={start} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const rebuyAmount = state.config.rebuyAmount;
+
   return (
     <div className={styles.viewport}>
       {/* Outer brass ring */}
@@ -21,16 +54,23 @@ export default function App() {
         <div className={styles.railInner}>
           {/* Felt table surface — Table fills it */}
           <Table
-            state={mockState}
+            state={state}
             heroIndex={0}
-            legalActions={mockLegalActions}
-            onAction={(action) => {
-              // eslint-disable-next-line no-console
-              console.log('[mock] action:', action);
-            }}
+            legalActions={legalActions}
+            onAction={submitHumanAction}
+            onNextHand={nextHand}
+            reducedMotion={reducedMotion}
           />
         </div>
       </div>
+
+      {/* Rebuy dialog overlays everything when hero is busted */}
+      {awaitingHumanRebuy && (
+        <RebuyDialog
+          amount={rebuyAmount}
+          onRebuy={rebuyHuman}
+        />
+      )}
     </div>
   );
 }

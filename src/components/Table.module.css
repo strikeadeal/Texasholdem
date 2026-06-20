@@ -42,58 +42,92 @@
 
 /* ---- Portrait-layout zones ---- */
 
+/*
+  Z-index stack (highest wins):
+    z-index 15: action bar (must be above everything)
+    z-index 10: next-hand button
+    z-index 5:  seats / hero zone
+    z-index 3:  center (board + pot)
+    z-index 1:  hand log ticker (behind seats, glanceable)
+    z-index 0:  felt texture
+*/
+
+/* Hand log: slim top-center ticker — behind seats, clear of arc */
+.handLogTicker {
+  position: absolute;
+  top: 38%;         /* sits just above center, below the opponent arc */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  max-width: 260px;
+  /* only show last 3 lines max height */
+  max-height: 48px;
+  overflow: hidden;
+  z-index: 1;       /* BEHIND seats (z-index 5) */
+  opacity: 0.55;
+  pointer-events: none;
+  text-align: center;
+}
+
 /* Upper arc: opponent seats */
 .opponentsArc {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  /* upper ~40% of felt */
-  height: 42%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  z-index: 2;
+  /* upper 38% of felt — opponents sit here */
+  height: 38%;
+  z-index: 5;
   pointer-events: none;
 }
 
 /* Center zone: board + pot */
 .centerZone {
   position: absolute;
-  top: 50%;
+  top: 42%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 2;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
+  pointer-events: none;
 }
 
-/* Hero zone: bottom of table */
+/* Board wrapper for layout animations */
+.boardWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hero zone: own clear band above the action bar */
+/*
+  Hero band: from 58% to 82% of felt height.
+  This gives ~24% of the felt height for hero cards + nameplate
+  and leaves the bottom 18% clear for the action bar.
+*/
 .heroZone {
   position: absolute;
-  bottom: 0;
+  bottom: 80px;     /* clear of action bar (~64px) + some breathing room */
   left: 0;
   right: 0;
-  /* lower ~36% of felt */
-  height: 36%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--space-2);
-  z-index: 2;
-  padding-bottom: var(--space-3);
+  z-index: 5;
+  pointer-events: auto;
 }
 
-/* Action bar sits at the absolute bottom */
+/* Action bar sits at the absolute bottom — highest z-index */
 .actionBar {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 10;
+  z-index: 15;
   /* Clear iOS home indicator */
   padding-bottom: env(safe-area-inset-bottom, 8px);
 }
@@ -107,17 +141,6 @@
   pointer-events: auto;
 }
 
-/* Hand log: overlaid top-right, semi-transparent */
-.handLogOverlay {
-  position: absolute;
-  top: var(--space-3);
-  right: var(--space-3);
-  width: 120px;
-  max-height: 80px;
-  z-index: 5;
-  opacity: 0.6;
-}
-
 /* Phase label */
 .phaseLabel {
   font-family: var(--font-body);
@@ -127,4 +150,44 @@
   color: var(--brass-lo);
   opacity: 0.7;
   text-align: center;
+}
+
+/* Next hand button bar */
+.nextHandBar {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.nextHandBtn {
+  background: linear-gradient(155deg, var(--brass-hi) 0%, var(--brass) 40%, var(--brass-lo) 100%);
+  color: var(--ink);
+  border: 1px solid var(--brass-lo);
+  border-radius: var(--radius-md);
+  padding: 10px 28px;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  box-shadow:
+    0 3px 10px rgba(0,0,0,0.6),
+    inset 0 1px 2px rgba(230,199,126,0.4);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.nextHandBtn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.nextHandBtn:active {
+  transform: translateY(1px);
+  filter: brightness(0.92);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nextHandBtn { transition: none; }
 }
