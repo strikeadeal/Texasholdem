@@ -1,16 +1,30 @@
 /**
- * FirstRun — onboarding dialog shown when no game has been started.
- * Lets the player configure their name and table stakes.
- * TODO: implement in step 4 (wiring agent).
+ * FirstRun — first-launch screen.
+ * "Pull up a chair." on felt with a brass Deal me in button.
+ *
+ * Props: { onStart: () => void }
+ * (The wiring agent may extend onStart with config params if needed.)
  */
 import React from 'react';
-import type { GameConfig } from '../engine/types';
+import styles from './FirstRun.module.css';
 
-interface FirstRunProps {
-  onStart: (playerName: string, config: GameConfig) => void;
+export interface FirstRunProps {
+  onStart: () => void;
 }
 
 export function FirstRun({ onStart }: FirstRunProps) {
-  void onStart;
-  return <div data-component="FirstRun" />;
+  return (
+    <div className={styles.screen}>
+      <span className={styles.eyebrow}>Private Table · Texas Hold'em</span>
+      <h1 className={styles.headline}>Pull up a chair.</h1>
+      <p className={styles.sub}>Six-handed no-limit. No rake. No nonsense.</p>
+      <button
+        className={styles.dealBtn}
+        onClick={onStart}
+        aria-label="Deal me in"
+      >
+        Deal me in
+      </button>
+    </div>
+  );
 }

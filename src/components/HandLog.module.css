@@ -1,0 +1,33 @@
+/* =========================================================
+   HandLog — compact scrollable event log on the felt
+   ========================================================= */
+
+.log {
+  overflow-y: auto;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-1);
+  /* Hide scrollbar but allow scroll */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.log::-webkit-scrollbar { display: none; }
+
+.entry {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--ivory-edge);
+  opacity: 0.65;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.entry:last-child {
+  opacity: 0.85;
+}

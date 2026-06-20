@@ -1,0 +1,104 @@
+/* =========================================================
+   RebuyDialog — calm rebuy prompt
+   ========================================================= */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(12,10,8,0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  border-radius: inherit;
+}
+
+.dialog {
+  background: linear-gradient(
+    160deg,
+    rgba(30,58,43,0.98) 0%,
+    rgba(21,41,30,0.99) 100%
+  );
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(184,145,84,0.22);
+  box-shadow:
+    0 8px 40px rgba(0,0,0,0.8),
+    inset 0 1px 1px rgba(230,199,126,0.07);
+  padding: var(--space-8) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+  max-width: 280px;
+  width: 100%;
+}
+
+/* Engraved brass rule above headline */
+.rule {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--brass), transparent);
+  opacity: 0.5;
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--ivory);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+}
+
+.sub {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--ivory-edge);
+  opacity: 0.55;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+
+/* ---- Brass rebuy button ---- */
+.rebuyBtn {
+  width: 100%;
+  min-height: 52px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    155deg,
+    var(--brass-hi) 0%,
+    var(--brass)    42%,
+    var(--brass-lo) 100%
+  );
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  border: none;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.65),
+    inset 0 1px 3px rgba(230,199,126,0.55);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  transition: filter var(--duration-fast) ease, transform var(--duration-fast) ease;
+}
+
+.rebuyBtn:hover {
+  filter: brightness(1.08);
+}
+
+.rebuyBtn:active {
+  transform: translateY(1px);
+  filter: brightness(0.9);
+}
+
+.rebuyBtn:focus-visible {
+  outline: 2px solid var(--brass-hi);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rebuyBtn { transition: none; }
+}

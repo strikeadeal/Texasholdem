@@ -1,31 +1,34 @@
 /**
  * App — root shell for "The Back Room".
  *
- * Renders a full-viewport, portrait-locked layout:
- *   backdrop → brass rail → mahogany band → felt table surface
+ * Renders the full Table with mock state for visual QA.
+ * The wiring agent will swap mockState for the live store.
  *
+ * Layout: --backdrop → brass rail outer → mahogany band → felt + Table.
  * Safe-area insets are respected via env(safe-area-inset-*).
- * This is the one visible deliverable for step 1; game components
- * are mounted here in later steps.
  */
 import React from 'react';
+import { Table } from './components/Table';
+import { mockState, mockLegalActions } from './components/__mock__/mockState';
 import styles from './App.module.css';
 
 export default function App() {
   return (
     <div className={styles.viewport}>
-      {/* Outer brass rail frame */}
+      {/* Outer brass ring */}
       <div className={styles.railOuter}>
+        {/* Inner mahogany band */}
         <div className={styles.railInner}>
-          {/* Felt table surface */}
-          <div className={styles.felt}>
-            {/* Step 1 placeholder: title centered on the felt */}
-            <div className={styles.titleBlock}>
-              <span className={styles.titleEyebrow}>Private Table</span>
-              <h1 className={styles.title}>The Back Room</h1>
-              <span className={styles.titleSub}>Texas Hold'em</span>
-            </div>
-          </div>
+          {/* Felt table surface — Table fills it */}
+          <Table
+            state={mockState}
+            heroIndex={0}
+            legalActions={mockLegalActions}
+            onAction={(action) => {
+              // eslint-disable-next-line no-console
+              console.log('[mock] action:', action);
+            }}
+          />
         </div>
       </div>
     </div>

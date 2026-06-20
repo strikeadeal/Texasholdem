@@ -1,0 +1,204 @@
+/* =========================================================
+   Seat — brass nameplate + hole cards + active timer ring
+   ========================================================= */
+
+.seat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  position: relative;
+  transition: opacity var(--duration-normal) ease;
+}
+
+.seat.folded {
+  opacity: 0.38;
+  filter: saturate(0.2);
+}
+
+/* ---- Nameplate ---- */
+.nameplate {
+  position: relative;
+  background: linear-gradient(
+    155deg,
+    var(--brass-hi) 0%,
+    var(--brass)    40%,
+    var(--brass-lo) 80%,
+    var(--brass)    100%
+  );
+  border-radius: 3px;
+  padding: 3px 8px 3px;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.6),
+    inset 0 1px 2px rgba(230,199,126,0.45),
+    inset 0 -1px 2px rgba(110,82,38,0.45);
+  min-width: 70px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+/* Active seat: pulse the nameplate border */
+.seat.active .nameplate {
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.6),
+    inset 0 1px 2px rgba(230,199,126,0.45),
+    inset 0 -1px 2px rgba(110,82,38,0.45),
+    0 0 0 1px var(--brass-hi);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  color: var(--ink);
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
+}
+
+.stack {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--ink);
+  opacity: 0.75;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* Hero seat: slightly larger nameplate */
+.hero .nameplate {
+  padding: 4px 10px;
+  min-width: 80px;
+  background: linear-gradient(
+    155deg,
+    var(--brass-hi) 0%,
+    var(--brass)    35%,
+    var(--brass-lo) 75%,
+    var(--brass)    100%
+  );
+}
+
+.hero .name {
+  font-size: var(--text-sm);
+}
+
+.hero .stack {
+  font-size: var(--text-xs);
+  opacity: 0.8;
+}
+
+/* ---- Markers row (D / SB / BB) ---- */
+.markers {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  position: absolute;
+  top: -10px;
+  right: -6px;
+}
+
+/* ---- Bet chip beneath nameplate ---- */
+.betArea {
+  margin-top: 2px;
+}
+
+/* ---- All-in tag ---- */
+.allInTag {
+  position: absolute;
+  top: -8px;
+  left: -6px;
+  background: linear-gradient(135deg, var(--brass-hi), var(--brass-lo));
+  border-radius: 2px;
+  padding: 1px 4px;
+  font-family: var(--font-display);
+  font-size: 7px;
+  color: var(--ink);
+  letter-spacing: 0.1em;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  white-space: nowrap;
+}
+
+/* ---- Hole cards row ---- */
+.holeCards {
+  display: flex;
+  gap: 3px;
+  align-items: flex-end;
+  margin-top: 2px;
+}
+
+/* Hero's hole cards: larger + lifted */
+.heroCards {
+  gap: 5px;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.65));
+}
+
+/* ---- Active timer ring ---- */
+.timerRing {
+  position: absolute;
+  inset: -6px;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+
+.timerRingSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* The sweeping stroke */
+.timerArc {
+  stroke: var(--brass-hi);
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 3px rgba(230,199,126,0.5));
+  animation: timerSweep 30s linear forwards;
+}
+
+@keyframes timerSweep {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timerArc {
+    animation: none;
+    stroke-dasharray: 0.6 0.4;
+  }
+}
+
+/* ---- Winner shimmer ---- */
+.seat.winner .nameplate {
+  animation: winnerShimmer 1.4s ease-in-out 2;
+}
+
+@keyframes winnerShimmer {
+  0%, 100% { box-shadow:
+    0 2px 8px rgba(0,0,0,0.6),
+    inset 0 1px 2px rgba(230,199,126,0.45),
+    inset 0 -1px 2px rgba(110,82,38,0.45); }
+  50%       { box-shadow:
+    0 2px 8px rgba(0,0,0,0.6),
+    inset 0 1px 2px rgba(230,199,126,0.45),
+    inset 0 -1px 2px rgba(110,82,38,0.45),
+    0 0 16px 2px rgba(230,199,126,0.55); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seat.winner .nameplate { animation: none; }
+}
+
+/* ---- Sitting-out dim ---- */
+.seat.sittingOut {
+  opacity: 0.22;
+  filter: saturate(0);
+}

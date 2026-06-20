@@ -1,7 +1,6 @@
 /**
- * BrassRail — the beveled brass + mahogany frame that wraps the felt table.
- * Visual implementation is in App.tsx for the scaffold; this component will
- * receive layout / animation responsibility in later steps.
+ * BrassRail — the signature beveled brass + mahogany frame.
+ * Wraps the felt play surface. Respects iOS safe areas.
  */
 import React from 'react';
 import styles from './BrassRail.module.css';
@@ -13,7 +12,9 @@ interface BrassRailProps {
 export function BrassRail({ children }: BrassRailProps) {
   return (
     <div className={styles.rail}>
-      {children}
+      <div className={styles.inner}>
+        {children}
+      </div>
     </div>
   );
 }
