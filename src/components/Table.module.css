@@ -5,7 +5,11 @@
 /* Outer container — fills the brass rail interior */
 .tableOuter {
   flex: 1;
-  border-radius: 999px;
+  /* Moderate the border-radius: 30% gives an elegant rounded oval while
+     keeping the corner clipping zone small (vRadius = 30% × height = ~173px).
+     Any content below ~30% from the top/bottom is in the flat section, fully
+     visible. This is crucial for 5 opponents needing the full felt width. */
+  border-radius: 30%;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -163,7 +167,7 @@
 */
 .heroZone {
   position: absolute;
-  bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 8px);
+  bottom: calc(64px + var(--safe-bottom) + 8px);
   left: 0;
   right: 0;
   display: flex;
@@ -182,7 +186,7 @@
   right: 0;
   z-index: 15;
   /* Clear iOS home indicator */
-  padding-bottom: env(safe-area-inset-bottom, 8px);
+  padding-bottom: max(var(--safe-bottom), 8px);
 }
 
 /*
@@ -194,19 +198,26 @@
   pointer-events: none;
 }
 
-/* Individual opponent seat positioned on the arc */
-.opponentSlot {
+/* Positioning anchor: places the slot at the computed (x%, y%) and
+   centers it horizontally via CSS so there's no conflict with
+   framer-motion's y-animation transform. */
+.opponentSlotAnchor {
   position: absolute;
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
+
+/* Inner wrapper animated by framer-motion (only opacity + y) */
+.opponentSlot {
   display: flex;
   flex-direction: column;
   align-items: center;
-  pointer-events: auto;
 }
 
 /* Next hand button bar — sits above the action placeholder */
 .nextHandBar {
   position: absolute;
-  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(72px + var(--safe-bottom));
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;

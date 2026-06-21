@@ -6,14 +6,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
+  /* Tighter gap so 5 cards + 4 gaps fit within the felt interior on narrow phones */
+  gap: clamp(3px, 1vw, 6px);
   position: relative;
+  /* Never wrap or overflow — if cards are still too wide the clamp on card
+     size keeps them in bounds */
+  flex-wrap: nowrap;
+  max-width: 100%;
 }
 
-/* Faint inset placeholder for undealt community cards */
+/* Faint inset placeholder for undealt community cards.
+   Default matches the "sm" card size (40×58) so the board never overflows
+   on narrow phones even at river (5 cards × 40px + 4 × 4px gap ≈ 216px). */
 .emptySlot {
-  width: 60px;
-  height: 87px;
+  width: 40px;
+  height: 58px;
   border-radius: var(--radius-card);
   background: rgba(21, 41, 30, 0.45);
   border: 1px solid rgba(184, 145, 84, 0.22);

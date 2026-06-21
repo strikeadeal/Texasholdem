@@ -106,8 +106,8 @@ export function Seat({
   ].filter(Boolean).join(' ');
 
   // Approximate nameplate dimensions for the timer ring
-  const nameplateW = isHero ? 80 : 70;
-  const nameplateH = 30;
+  const nameplateW = isHero ? 80 : 52;
+  const nameplateH = isHero ? 30 : 26;
 
   return (
     <div className={seatClasses}>

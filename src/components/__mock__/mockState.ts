@@ -120,3 +120,61 @@ export const mockShowdownState: GameState = {
     ],
   },
 };
+
+// ---- Preflop variant — 6 seats, blinds posted, no community cards ----
+export const mockPreflopState: GameState = {
+  ...mockState,
+  phase: 'preflop',
+  board: [],
+  pots: [],
+  toActIndex: 0,
+  log: [
+    'Hand #8 — Riles deals',
+    'Marcus posts SB 10',
+    'Deja posts BB 20',
+  ],
+  lastResult: null,
+};
+
+// ---- River variant — all 5 opponents still in, full 5-card board ----
+export const mockRiverState: GameState = {
+  config: {
+    smallBlind:    10,
+    bigBlind:      20,
+    startingStack: 1000,
+    rebuyAmount:   1000,
+  },
+  seats: [
+    // Hero
+    seat('p0', 'You',    620,  true,  [card(14, 'spades'), card(13, 'hearts')], 100, 100, false, false),
+    // All 5 opponents still in
+    seat('p1', 'Marcus', 440,  false, [card(7,  'clubs'),  card(2,  'diamonds')], 100, 100, false, false),
+    seat('p2', 'Deja',   390,  false, [card(10, 'hearts'), card(10, 'spades')],   100, 100, false, false),
+    seat('p3', 'Carver', 520,  false, [card(9,  'clubs'),  card(8,  'hearts')],   100, 100, false, false),
+    seat('p4', 'Riles',  305,  false, [card(9,  'spades'), card(8,  'spades')],   100, 100, false, false),
+    seat('p5', 'Tanaka', 210,  false, [card(4,  'clubs'),  card(4,  'hearts')],   100, 100, false, false),
+  ],
+  buttonIndex:         3,
+  phase:               'river',
+  board: [
+    card(14, 'clubs'),   // Ac
+    card(7,  'hearts'),  // 7h
+    card(3,  'spades'),  // 3s
+    card(14, 'hearts'),  // Ah (turn)
+    card(13, 'clubs'),   // Kc (river)
+  ],
+  deck: [],
+  pots: [
+    { amount: 600, eligiblePlayerIds: ['p0','p1','p2','p3','p4','p5'] },
+  ],
+  currentBet:          0,
+  minRaise:            20,
+  toActIndex:          0,
+  lastAggressorIndex:  null,
+  handNumber:          8,
+  log: [
+    'Hand #8 — river dealt',
+    'You to act',
+  ],
+  lastResult: null,
+};

@@ -45,32 +45,42 @@ function relativeSeats(state: GameState, heroIndex: number) {
  * Hero is fixed at bottom-center. Opponents spread across top.
  *
  * Seats are kept well inside the oval rail so nothing is clipped.
- * The arc spans from ~18% to ~82% horizontally (inward from the curved edges)
- * and from ~8% to ~26% vertically (below the top rail curvature).
+ * Key constraints for real iPhones with Dynamic Island / safe-area insets:
+ *   - Top cap of the oval is clipped by border-radius; seats must be BELOW ~18%
+ *   - Side caps clip at ~10% in from each edge at the vertical mid-point;
+ *     corner seats must stay further inward (≥22%)
+ *   - Each cluster (nameplate ≈52px + two fanned back cards ≈42px) needs
+ *     enough horizontal clearance so 5 seats never touch (min ~60px per slot)
  */
 function opponentPositions(count: number): Array<{ x: number; y: number }> {
   if (count === 0) return [];
   const positions: Array<{ x: number; y: number }> = [];
 
-  // Pull seats inward from the oval edges so they're never clipped.
-  // The oval shape is narrowest at the top and bottom, so corner seats
-  // must be pushed further down (higher arcYMax) and inward (smaller x range).
-  const arcStartX = 0.20;
-  const arcEndX   = 0.80;
-  const arcYMin   = 0.10;  // center seat position (top-center of arc)
-  const arcYMax   = 0.28;  // corner seats pushed lower to stay inside oval
+  // Horizontal safe rect: spread as wide as possible while keeping corner
+  // seats inside the oval's curved region.
+  // With border-radius:48% on the felt, the corner at (10%, 30%) is safely
+  // inside the oval (the curve's x-extent at y=30% is ~5% from edge).
+  // We spread centers 10%–90% so 5 × 52px slots with ~57px spacing have a
+  // guaranteed ~5px gap (57px center-to-center minus 52px slot width).
+  const arcStartX = 0.10;
+  const arcEndX   = 0.90;
+
+  // Vertical safe rect top: 14% clears the top cap of the oval.
+  // Arc floor: corner seats at 32% to stay in the flat mid-section of the oval.
+  const arcYMin   = 0.14;  // center-top seat
+  const arcYMax   = 0.32;  // corner seats
 
   if (count === 1) {
-    return [{ x: 50, y: arcYMin * 100 + 2 }];
+    return [{ x: 50, y: arcYMin * 100 }];
   }
 
   for (let i = 0; i < count; i++) {
-    const t = count === 1 ? 0.5 : i / (count - 1);
+    const t = i / (count - 1);
     const x = arcStartX + t * (arcEndX - arcStartX);
-    // Parabolic arc: y is lowest (highest on screen) at edges, highest at center
-    // Corner seats nudge lower (arcYMax) while middle seat sits at arcYMin
-    const parabola = 4 * t * (1 - t);  // 0 at edges, 1 at center
-    const y = arcYMin + (1 - parabola) * (arcYMax - arcYMin);
+    // Inverted parabola: center = arcYMin (highest on screen / smallest y%),
+    // edges = arcYMax (further down, safe from oval corner clipping).
+    const parabola = 4 * t * (1 - t);  // 1 at center, 0 at edges
+    const y = arcYMax - parabola * (arcYMax - arcYMin);
     positions.push({ x: x * 100, y: y * 100 });
   }
   return positions;
@@ -137,36 +147,43 @@ export function Table({
             if (!seat || !pos) return null;
 
             return (
-              <motion.div
+              /* Positioning wrapper: places the slot at (x%, y%) and centers
+                 it horizontally. Centering is handled purely in CSS via
+                 translateX(-50%) on .opponentSlot so framer-motion's y animation
+                 doesn't conflict with an inline transform. */
+              <div
                 key={absoluteIdx}
-                className={styles.opponentSlot}
+                className={styles.opponentSlotAnchor}
                 style={{
                   left: `${pos.x}%`,
                   top:  `${pos.y}%`,
-                  transform: 'translate(-50%, 0)',
                 }}
-                initial={reducedMotion ? false : { opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: i * 0.07 }}
               >
-                <Seat
-                  seat={seat}
-                  seatIndex={absoluteIdx}
-                  isHero={false}
-                  isActive={state.toActIndex === absoluteIdx}
-                  isDealer={state.buttonIndex === absoluteIdx}
-                  isSmallBlind={
-                    state.phase !== 'idle' &&
-                    ((state.buttonIndex + 1) % n) === absoluteIdx
-                  }
-                  isBigBlind={
-                    state.phase !== 'idle' &&
-                    ((state.buttonIndex + 2) % n) === absoluteIdx
-                  }
-                  isWinner={winnerIds.has(seat.player.id)}
-                  showHoleCards={showOpponentCards}
-                />
-              </motion.div>
+                <motion.div
+                  className={styles.opponentSlot}
+                  initial={reducedMotion ? false : { opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: i * 0.07 }}
+                >
+                  <Seat
+                    seat={seat}
+                    seatIndex={absoluteIdx}
+                    isHero={false}
+                    isActive={state.toActIndex === absoluteIdx}
+                    isDealer={state.buttonIndex === absoluteIdx}
+                    isSmallBlind={
+                      state.phase !== 'idle' &&
+                      ((state.buttonIndex + 1) % n) === absoluteIdx
+                    }
+                    isBigBlind={
+                      state.phase !== 'idle' &&
+                      ((state.buttonIndex + 2) % n) === absoluteIdx
+                    }
+                    isWinner={winnerIds.has(seat.player.id)}
+                    showHoleCards={showOpponentCards}
+                  />
+                </motion.div>
+              </div>
             );
           })}
         </AnimatePresence>
@@ -189,7 +206,7 @@ export function Table({
           layout={!reducedMotion}
           className={styles.boardWrapper}
         >
-          <Board cards={state.board} size="md" />
+          <Board cards={state.board} size="sm" />
         </motion.div>
       </div>
 
