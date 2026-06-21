@@ -1,0 +1,221 @@
+/* =========================================================
+   Card — aged-ivory playing card with paper grain and brass accents
+   ========================================================= */
+
+.flipContainer {
+  perspective: 600px;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.flipContainer.sm  { width: 40px;  height: 58px; }
+.flipContainer.md  { width: 60px;  height: 87px; }
+.flipContainer.lg  { width: 80px;  height: 116px; }
+
+.card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform var(--duration-slow) var(--ease-deal);
+  border-radius: var(--radius-card);
+}
+
+/* Face-down card is flipped 180deg */
+.faceDown .card {
+  transform: rotateY(180deg);
+}
+
+.face,
+.back {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* ---- Face-up card ---- */
+.face {
+  background: var(--ivory);
+  border: 1px solid var(--ivory-edge);
+  box-shadow:
+    var(--shadow-card),
+    inset 0 0 0 1px rgba(240,232,212,0.6);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+/* Paper grain via SVG filter applied on a pseudo */
+.face::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23grain)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  pointer-events: none;
+  opacity: 0.6;
+  mix-blend-mode: multiply;
+}
+
+/* Subtle inner-edge vignette */
+.face::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px var(--ivory-edge),
+    inset 0 2px 6px rgba(216,206,178,0.25);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ---- Corner indices ---- */
+.cornerTL,
+.cornerBR {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+
+.cornerTL {
+  top: 3px;
+  left: 3px;
+}
+
+.cornerBR {
+  bottom: 3px;
+  right: 3px;
+  transform: rotate(180deg);
+}
+
+.cornerRank {
+  display: block;
+  font-family: var(--font-display);
+  line-height: 1;
+}
+
+.cornerSuit {
+  display: block;
+  line-height: 1;
+}
+
+/* Size-specific corner text */
+.sm .cornerRank  { font-size: 9px; }
+.sm .cornerSuit  { font-size: 8px; }
+.md .cornerRank  { font-size: 11px; }
+.md .cornerSuit  { font-size: 10px; }
+.lg .cornerRank  { font-size: 14px; }
+.lg .cornerSuit  { font-size: 13px; }
+
+/* ---- Center pip area ---- */
+.center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* Center pip suit glyph */
+.centerPip {
+  line-height: 1;
+  user-select: none;
+}
+
+.sm .centerPip  { font-size: 22px; }
+.md .centerPip  { font-size: 32px; }
+.lg .centerPip  { font-size: 44px; }
+
+/* Face card monogram */
+.monogram {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  position: relative;
+}
+
+.monogramLetter {
+  font-family: var(--font-display);
+  line-height: 1;
+}
+
+.monogramSuit {
+  line-height: 1;
+}
+
+.sm .monogramLetter { font-size: 16px; }
+.sm .monogramSuit   { font-size: 14px; }
+.md .monogramLetter { font-size: 24px; }
+.md .monogramSuit   { font-size: 20px; }
+.lg .monogramLetter { font-size: 32px; }
+.lg .monogramSuit   { font-size: 26px; }
+
+/* Burnished gold ornament filigree for J/Q/K */
+.filigree {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+/* ---- Suit colors ---- */
+.red   { color: var(--oxblood); }
+.black { color: var(--ink); }
+
+/* ---- Face-down card back ---- */
+.back {
+  transform: rotateY(180deg);
+  background: var(--felt);
+  border: 1px solid var(--brass-lo);
+  box-shadow:
+    var(--shadow-card),
+    inset 0 0 0 2px var(--brass-lo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* The guilloche pattern is rendered as an inline SVG child */
+.backPattern {
+  position: absolute;
+  inset: 4px;
+  border-radius: calc(var(--radius-card) - 2px);
+  overflow: hidden;
+  opacity: 0.7;
+}
+
+/* ---- Hover lift (desktop) ---- */
+@media (hover: hover) {
+  .flipContainer:hover .card {
+    transform: translateY(-3px);
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.55));
+    transition: transform var(--duration-fast) ease-out,
+                filter var(--duration-fast) ease-out;
+  }
+  .faceDown.flipContainer:hover .card {
+    transform: rotateY(180deg) translateY(-3px);
+  }
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+}

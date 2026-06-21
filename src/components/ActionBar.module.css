@@ -1,0 +1,147 @@
+/* =========================================================
+   ActionBar — brass action buttons at the bottom
+   ========================================================= */
+
+.bar {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: linear-gradient(
+    to top,
+    rgba(12,10,8,0.75) 0%,
+    rgba(12,10,8,0) 100%
+  );
+  /* Raise panel renders above */
+  position: relative;
+}
+
+/* ---- Brass button base ---- */
+.btn {
+  flex: 1;
+  min-height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  position: relative;
+  transition:
+    transform var(--duration-fast) ease,
+    filter var(--duration-fast) ease;
+  border: none;
+  outline: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0 var(--space-2);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--brass-hi);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .btn:not(:disabled):hover {
+    transform: translateY(-1px);
+    filter: brightness(1.08);
+  }
+}
+
+.btn:not(:disabled):active {
+  transform: translateY(1px);
+  filter: brightness(0.92);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+}
+
+/* ---- Fold: muted mahogany button ---- */
+.btnFold {
+  background: linear-gradient(
+    160deg,
+    rgba(59,32,22,0.9) 0%,
+    rgba(42,22,16,0.95) 100%
+  );
+  color: var(--ivory);
+  opacity: 0.85;
+  border: 1px solid rgba(184,145,84,0.18);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.55),
+    inset 0 1px 1px rgba(240,232,212,0.07);
+  flex: 0.8;
+}
+
+/* ---- Check / Call: primary brass ---- */
+.btnCall {
+  background: linear-gradient(
+    155deg,
+    var(--brass-hi) 0%,
+    var(--brass)    40%,
+    var(--brass-lo) 100%
+  );
+  color: var(--ink);
+  box-shadow:
+    0 3px 10px rgba(0,0,0,0.6),
+    inset 0 1px 2px rgba(230,199,126,0.5),
+    inset 0 -1px 2px rgba(110,82,38,0.5);
+  border: 1px solid var(--brass-lo);
+  flex: 1.2;
+  font-size: var(--text-base);
+}
+
+/* ---- Bet / Raise: slightly dimmer brass ---- */
+.btnRaise {
+  background: linear-gradient(
+    155deg,
+    var(--brass) 0%,
+    var(--brass-lo) 100%
+  );
+  color: var(--ivory-edge);
+  border: 1px solid var(--brass-lo);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.55),
+    inset 0 1px 1px rgba(230,199,126,0.2);
+  flex: 0.9;
+}
+
+.btnLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.btnMain {
+  display: block;
+  line-height: 1;
+}
+
+.btnSub {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 10px;
+  opacity: 0.7;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* ---- Raise panel container ---- */
+.raisePanel {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: var(--space-3);
+  right: var(--space-3);
+  z-index: 20;
+}

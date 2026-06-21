@@ -1,0 +1,77 @@
+/* =========================================================
+   Global styles — PWA / iOS hardening + base reset
+   ========================================================= */
+
+@import './tokens.css';
+
+/* --- Box model reset --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* --- Full-height app shell --- */
+html,
+body,
+#root {
+  height: 100%;
+  /* Use dynamic viewport height so the address bar / home indicator are respected */
+  min-height: 100dvh;
+  margin: 0;
+  background: var(--backdrop);
+}
+
+/* --- PWA / iOS hardening --- */
+html {
+  /* Prevent elastic bounce-scroll revealing backdrop colour */
+  overscroll-behavior: none;
+  /* Respect safe-area insets on notched phones */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  /* Disable text selection everywhere; re-enable selectively (e.g. chip counts) */
+  user-select: none;
+  -webkit-user-select: none;
+  /* Remove iOS tap highlight flash */
+  -webkit-tap-highlight-color: transparent;
+  /* Disable callout popup (long-press on links/images) on iOS */
+  -webkit-touch-callout: none;
+
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--ivory);
+  background: var(--backdrop);
+
+  /* Prevent overscroll bounce on iOS */
+  overscroll-behavior: none;
+}
+
+/* --- Tabular figures helper --- */
+.tnum {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Utility: allow text selection where needed --- */
+.selectable {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* --- Remove default button / input chrome --- */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input,
+textarea {
+  font-family: inherit;
+}

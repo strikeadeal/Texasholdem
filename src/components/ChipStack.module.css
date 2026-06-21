@@ -1,0 +1,36 @@
+/* =========================================================
+   ChipStack — stacked SVG chips for pot / bet display
+   ========================================================= */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.chips {
+  display: flex;
+  flex-direction: row-reverse; /* stacks left to right visually */
+  align-items: flex-end;
+  gap: -4px;
+}
+
+.amount {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--ivory);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  letter-spacing: 0.03em;
+  opacity: 0.9;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.amount.prominent {
+  font-size: var(--text-sm);
+  color: var(--brass);
+  opacity: 1;
+}

@@ -1,0 +1,66 @@
+/* =========================================================
+   DealerButton — brass disc markers (D / SB / BB)
+   ========================================================= */
+
+.disc {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  user-select: none;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Default: dealer D */
+.disc.dealer {
+  width: 22px;
+  height: 22px;
+  font-size: 9px;
+  background: linear-gradient(
+    145deg,
+    var(--brass-hi) 0%,
+    var(--brass)    45%,
+    var(--brass-lo) 100%
+  );
+  color: var(--ink);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.55),
+    inset 0 1px 2px rgba(230,199,126,0.5),
+    inset 0 -1px 2px rgba(110,82,38,0.5);
+}
+
+.disc.dealer::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(110,82,38,0.4);
+  pointer-events: none;
+}
+
+/* SB / BB: slightly smaller, more muted brass */
+.disc.blind {
+  width: 18px;
+  height: 18px;
+  font-size: 7px;
+  background: linear-gradient(
+    145deg,
+    var(--brass) 0%,
+    var(--brass-lo) 100%
+  );
+  color: var(--ink);
+  opacity: 0.9;
+  box-shadow:
+    0 1px 4px rgba(0,0,0,0.5),
+    inset 0 1px 1px rgba(230,199,126,0.3);
+}
+
+.text {
+  position: relative;
+  z-index: 1;
+}

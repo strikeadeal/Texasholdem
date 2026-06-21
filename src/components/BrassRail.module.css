@@ -1,0 +1,61 @@
+/* =========================================================
+   BrassRail — beveled brass + mahogany frame
+   Signature visual: the metal frame around the play area.
+   ========================================================= */
+
+.rail {
+  /* Outermost layer: mahogany base */
+  background: var(--mahogany);
+  border-radius: 999px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  /*
+    Layered box-shadow builds the beveled brass rail:
+    1) thin bright highlight (top/left edge of brass)  → brass-hi
+    2) main brass body                                  → brass
+    3) deep shadow undercut                             → brass-lo
+    4) thin mahogany shadow band                        → mahogany-shadow
+    5) ambient depth drop shadow
+  */
+  box-shadow:
+    0 0 0 1px var(--brass-hi),   /* outer highlight ring */
+    0 0 0 3px var(--brass),      /* brass body           */
+    0 0 0 5px var(--brass-lo),   /* shadow undercut      */
+    0 0 0 8px var(--mahogany),   /* mahogany band        */
+    0 0 0 9px var(--mahogany-shadow),
+    0 12px 48px rgba(0,0,0,0.85),
+    0 4px 16px rgba(0,0,0,0.65);
+
+  padding: 16px;
+}
+
+/* Inner lit edge of the brass bevel */
+.rail::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 3px 5px rgba(230,199,126,0.35),
+    inset 0 -3px 5px rgba(30,10,5,0.5),
+    inset 3px 0 5px rgba(230,199,126,0.12),
+    inset -3px 0 5px rgba(30,10,5,0.25);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Mahogany inner band */
+.inner {
+  flex: 1;
+  border-radius: 999px;
+  background: var(--mahogany-shadow);
+  padding: 8px;
+  display: flex;
+  box-shadow:
+    inset 0 2px 8px rgba(0,0,0,0.7),
+    0 0 0 2px var(--mahogany-shadow);
+  position: relative;
+}

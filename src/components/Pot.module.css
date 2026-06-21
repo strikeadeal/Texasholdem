@@ -1,0 +1,90 @@
+/* =========================================================
+   Pot — engraved brass plate with chip stack
+   ========================================================= */
+
+.potWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.plate {
+  background: linear-gradient(
+    160deg,
+    var(--brass-hi) 0%,
+    var(--brass)    40%,
+    var(--brass-lo) 80%,
+    var(--brass)    100%
+  );
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.5),
+    inset 0 1px 1px rgba(230,199,126,0.4),
+    inset 0 -1px 1px rgba(110,82,38,0.5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.label {
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  color: var(--ink);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+.amount {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  color: var(--ink);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Side pots shown in a smaller row */
+.sidePots {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.sidePot {
+  background: linear-gradient(
+    160deg,
+    var(--brass) 0%,
+    var(--brass-lo) 100%
+  );
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.4),
+    inset 0 1px 1px rgba(230,199,126,0.2);
+}
+
+.sidePotLabel {
+  font-family: var(--font-display);
+  font-size: 10px;
+  color: var(--ink);
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+}
+
+.sidePotAmount {
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  color: var(--ink);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  margin-left: 3px;
+}

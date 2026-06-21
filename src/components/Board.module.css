@@ -1,0 +1,34 @@
+/* =========================================================
+   Board — community card row
+   ========================================================= */
+
+.board {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  position: relative;
+}
+
+/* Faint inset placeholder for undealt community cards */
+.emptySlot {
+  width: 60px;
+  height: 87px;
+  border-radius: var(--radius-card);
+  background: rgba(21, 41, 30, 0.45);
+  border: 1px solid rgba(184, 145, 84, 0.22);
+  box-shadow:
+    inset 0 2px 6px rgba(0,0,0,0.4),
+    inset 0 0 0 1px rgba(0,0,0,0.25);
+}
+
+/* Smaller slot for sm size */
+.emptySlot.sm {
+  width: 40px;
+  height: 58px;
+}
+
+.emptySlot.lg {
+  width: 80px;
+  height: 116px;
+}
