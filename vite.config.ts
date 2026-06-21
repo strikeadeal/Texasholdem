@@ -20,21 +20,24 @@ export default defineConfig({
         orientation: 'portrait',
         background_color: '#0C0A08',
         theme_color: '#2A1610',
-        start_url: '/',
+        // Relative paths (no leading slash) so the manifest resolves correctly
+        // whether served from the domain root or a GitHub Pages project subpath
+        // (e.g. /Texasholdem/). They resolve against the manifest's own URL.
+        start_url: '.',
+        scope: './',
         icons: [
           {
-            src: '/icons/icon-192.png',
+            src: 'icons/icon-192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: '/icons/icon-512.png',
+            src: 'icons/icon-512.png',
             sizes: '512x512',
             type: 'image/png',
           },
           {
-            // PLACEHOLDER — real maskable icon generated in step 5
-            src: '/icons/icon-512-maskable.png',
+            src: 'icons/icon-512-maskable.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',
