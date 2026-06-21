@@ -45,6 +45,7 @@
 /*
   Z-index stack (highest wins):
     z-index 15: action bar (must be above everything)
+    z-index 12: result strip + thinking caption (above board, below seats)
     z-index 10: next-hand button
     z-index 5:  seats / hero zone
     z-index 3:  center (board + pot)
@@ -52,39 +53,38 @@
     z-index 0:  felt texture
 */
 
-/* Hand log: slim top-center ticker — behind seats, clear of arc */
+/* Hand log: slim ticker — sits in the transition zone between opponent arc
+   and the center (board/pot). Kept very subtle so it never obscures the pot. */
 .handLogTicker {
   position: absolute;
-  top: 38%;         /* sits just above center, below the opponent arc */
+  top: 33%;
   left: 50%;
   transform: translateX(-50%);
-  width: 70%;
-  max-width: 260px;
-  /* only show last 3 lines max height */
-  max-height: 48px;
+  width: 60%;
+  max-width: 220px;
+  max-height: 28px;
   overflow: hidden;
-  z-index: 1;       /* BEHIND seats (z-index 5) */
-  opacity: 0.55;
+  z-index: 1;       /* BEHIND seats and center zone */
+  opacity: 0.35;
   pointer-events: none;
   text-align: center;
 }
 
-/* Upper arc: opponent seats */
+/* Upper arc: opponent seats — spans full table so percentage positions
+   are relative to the full oval (not a clipped sub-zone). */
 .opponentsArc {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  /* upper 38% of felt — opponents sit here */
-  height: 38%;
+  inset: 0;
   z-index: 5;
   pointer-events: none;
 }
 
-/* Center zone: board + pot */
+/* Center zone: board + pot — at the vertical midpoint of the open felt area.
+   Open felt = from y≈32% (below arc) to y≈68% (above hero).
+   Midpoint ≈ 50%. We use 48% to place it slightly above center. */
 .centerZone {
   position: absolute;
-  top: 42%;
+  top: 48%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 3;
@@ -102,15 +102,68 @@
   justify-content: center;
 }
 
-/* Hero zone: own clear band above the action bar */
 /*
-  Hero band: from 58% to 82% of felt height.
-  This gives ~24% of the felt height for hero cards + nameplate
-  and leaves the bottom 18% clear for the action bar.
+  Result strip — thin brass-edged strip, shown at handover/showdown.
+  Sits below center zone and above hero area. Never overlaps the pot.
+*/
+.resultStrip {
+  position: absolute;
+  top: 61%;  /* below center zone (board bottom ≈ 55%) */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  pointer-events: none;
+
+  background: linear-gradient(
+    160deg,
+    rgba(59,32,22,0.88) 0%,
+    rgba(42,22,16,0.92) 100%
+  );
+  border: 1px solid rgba(184,145,84,0.35);
+  border-radius: var(--radius-md);
+  padding: 5px 14px;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.55),
+    inset 0 1px 1px rgba(230,199,126,0.15);
+
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  color: var(--brass-hi);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  text-align: center;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* "Thinking" caption — quiet, restrained, between board and hero */
+.thinkingCaption {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  pointer-events: none;
+
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--ivory-edge);
+  letter-spacing: 0.06em;
+  opacity: 0.5;
+  font-style: italic;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/*
+  Hero zone: positioned above the action bar.
+  bottom = action bar height (64px) + padding-bottom safe-area.
+  Tight to the action bar to bring hero cards up toward center.
 */
 .heroZone {
   position: absolute;
-  bottom: 80px;     /* clear of action bar (~64px) + some breathing room */
+  bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 8px);
   left: 0;
   right: 0;
   display: flex;
@@ -132,6 +185,15 @@
   padding-bottom: env(safe-area-inset-bottom, 8px);
 }
 
+/*
+  Placeholder that reserves the action bar height when it's not the hero's turn.
+  Prevents layout shift between hero turn and bot turn.
+*/
+.actionBarPlaceholder {
+  height: 64px; /* matches the rendered ActionBar height */
+  pointer-events: none;
+}
+
 /* Individual opponent seat positioned on the arc */
 .opponentSlot {
   position: absolute;
@@ -141,21 +203,10 @@
   pointer-events: auto;
 }
 
-/* Phase label */
-.phaseLabel {
-  font-family: var(--font-body);
-  font-size: var(--text-xs);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--brass-lo);
-  opacity: 0.7;
-  text-align: center;
-}
-
-/* Next hand button bar */
+/* Next hand button bar — sits above the action placeholder */
 .nextHandBar {
   position: absolute;
-  bottom: 80px;
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;

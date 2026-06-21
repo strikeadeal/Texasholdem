@@ -6,8 +6,9 @@
  *   Up to 5 opponents arranged across the upper arc.
  *   Board + Pot centered.
  *   Bets (ChipStacks) between each seat and the pot.
- *   ActionBar at the very bottom.
- *   HandLog: slim ticker docked top-center, BELOW the rail, z-index behind seats.
+ *   ActionBar at the very bottom (hidden when not hero's turn; space reserved).
+ *   HandLog: slim ticker docked above center zone, behind seats.
+ *   ResultStrip: restrained handover result strip above hero area.
  *
  * The Table derives everything shown from `state`. Seat positions are
  * computed relative to heroIndex so the human is always at the bottom.
@@ -43,19 +44,21 @@ function relativeSeats(state: GameState, heroIndex: number) {
  * Compute (x%, y%) positions for opponents around the upper arc of the table.
  * Hero is fixed at bottom-center. Opponents spread across top.
  *
- * For k opponents (k = n - 1), distribute evenly across angles
- * from ~200° to ~340° (in screen coords, 0° = right, clockwise).
- * Center of table = (50%, 48%).
+ * Seats are kept well inside the oval rail so nothing is clipped.
+ * The arc spans from ~18% to ~82% horizontally (inward from the curved edges)
+ * and from ~8% to ~26% vertically (below the top rail curvature).
  */
 function opponentPositions(count: number): Array<{ x: number; y: number }> {
   if (count === 0) return [];
   const positions: Array<{ x: number; y: number }> = [];
 
-  // Tighter arc with more spacing to avoid overlap
-  const arcStartX = 0.10;
-  const arcEndX   = 0.90;
-  const arcYMin   = 0.06;  // very top
-  const arcYMax   = 0.28;  // mid-upper
+  // Pull seats inward from the oval edges so they're never clipped.
+  // The oval shape is narrowest at the top and bottom, so corner seats
+  // must be pushed further down (higher arcYMax) and inward (smaller x range).
+  const arcStartX = 0.20;
+  const arcEndX   = 0.80;
+  const arcYMin   = 0.10;  // center seat position (top-center of arc)
+  const arcYMax   = 0.28;  // corner seats pushed lower to stay inside oval
 
   if (count === 1) {
     return [{ x: 50, y: arcYMin * 100 + 2 }];
@@ -64,8 +67,8 @@ function opponentPositions(count: number): Array<{ x: number; y: number }> {
   for (let i = 0; i < count; i++) {
     const t = count === 1 ? 0.5 : i / (count - 1);
     const x = arcStartX + t * (arcEndX - arcStartX);
-    // Parabolic arc: y is lowest (highest on screen) at edges, highest in middle
-    // This puts corner seats at top and middle seat at mid-upper
+    // Parabolic arc: y is lowest (highest on screen) at edges, highest at center
+    // Corner seats nudge lower (arcYMax) while middle seat sits at arcYMin
     const parabola = 4 * t * (1 - t);  // 0 at edges, 1 at center
     const y = arcYMin + (1 - parabola) * (arcYMax - arcYMin);
     positions.push({ x: x * 100, y: y * 100 });
@@ -100,13 +103,24 @@ export function Table({
   // Show showdown cards (opponents' hole cards face-up) in showdown/handover
   const showOpponentCards = state.phase === 'showdown' || state.phase === 'handover';
 
-  // Recent log lines for ticker (bottom 3 lines)
-  const logTicker = state.log.slice(-3);
+  // Recent log lines for ticker — only non-"wins" lines (wins go to result strip)
+  const logTicker = state.log.slice(-2).filter(l => !l.toLowerCase().includes('wins'));
+
+  // Result line at handover: find the last "wins" log entry
+  const resultLine = state.phase === 'handover' || state.phase === 'showdown'
+    ? [...state.log].reverse().find(l => l.toLowerCase().includes('wins'))
+    : undefined;
+
+  // Active opponent name for the "thinking" caption
+  const activeOpponentSeat = !isHeroTurn && state.toActIndex !== null
+    ? state.seats[state.toActIndex]
+    : null;
+  const thinkingName = activeOpponentSeat?.player.name ?? null;
 
   return (
     <div className={styles.tableOuter}>
 
-      {/* ---- Hand log: slim ticker top-center, z-index 1 (behind seats) ---- */}
+      {/* ---- Hand log: slim ticker in upper-center band, below opponent arc ---- */}
       {logTicker.length > 0 && (
         <div className={styles.handLogTicker}>
           <HandLog entries={logTicker} />
@@ -158,11 +172,8 @@ export function Table({
         </AnimatePresence>
       </div>
 
-      {/* ---- Center: Board + Pot ---- */}
+      {/* ---- Center: Board + Pot (phase label removed — superfluous accessory) ---- */}
       <div className={styles.centerZone}>
-        {state.phase !== 'idle' && (
-          <span className={styles.phaseLabel}>{state.phase}</span>
-        )}
         {/* Pot: only show the committed pot (pots array), not total with bets */}
         {committedPot > 0 && (
           <motion.div
@@ -181,6 +192,36 @@ export function Table({
           <Board cards={state.board} size="md" />
         </motion.div>
       </div>
+
+      {/* ---- Result strip: handover winner line, clearly below the board ---- */}
+      <AnimatePresence>
+        {resultLine && (
+          <motion.div
+            className={styles.resultStrip}
+            initial={reducedMotion ? false : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35, delay: 0.15 }}
+          >
+            {resultLine}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ---- "Thinking" caption when it's an opponent's turn ---- */}
+      <AnimatePresence>
+        {thinkingName && (
+          <motion.div
+            className={styles.thinkingCaption}
+            initial={reducedMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            {thinkingName} is thinking…
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ---- Hero zone (bottom) ---- */}
       <div className={styles.heroZone}>
@@ -209,16 +250,16 @@ export function Table({
         </motion.div>
       </div>
 
-      {/* ---- Action bar ---- */}
+      {/* ---- Action bar — space always reserved to prevent layout shift ---- */}
       <div className={styles.actionBar}>
         <AnimatePresence>
-          {isHeroTurn && legalActions && (
+          {isHeroTurn && legalActions ? (
             <motion.div
-              key="actionbar"
-              initial={reducedMotion ? false : { opacity: 0, y: 24 }}
+              key="actionbar-active"
+              initial={reducedMotion ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 24 }}
-              transition={{ duration: 0.2 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.18 }}
             >
               <ActionBar
                 legalActions={legalActions}
@@ -226,6 +267,9 @@ export function Table({
                 potSize={totalPot}
               />
             </motion.div>
+          ) : (
+            /* Reserve space so the hero zone doesn't shift when actions appear */
+            <div key="actionbar-placeholder" className={styles.actionBarPlaceholder} />
           )}
         </AnimatePresence>
       </div>

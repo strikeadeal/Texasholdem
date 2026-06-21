@@ -51,21 +51,21 @@
 
 .name {
   font-family: var(--font-display);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);   /* bumped from text-xs for arm's-length legibility */
   color: var(--ink);
   letter-spacing: 0.06em;
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 80px;
+  max-width: 86px;
 }
 
 .stack {
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: var(--text-xs);   /* bumped from 10px */
   color: var(--ink);
-  opacity: 0.75;
+  opacity: 0.85;               /* slightly more opaque */
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums;
   line-height: 1;
